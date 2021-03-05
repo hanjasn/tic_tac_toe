@@ -1,0 +1,2 @@
+class NonEmptyPositionError(Exception):
+    pass
