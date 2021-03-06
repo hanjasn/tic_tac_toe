@@ -7,7 +7,7 @@ class Mark:
     EMPTY = " "
 
     def __init__(self):
-        self.set_empty()
+        self.mark = Mark.EMPTY
 
     def set_x(self):
         self.mark = Mark.X
@@ -50,20 +50,20 @@ class Board:
         self.winner.set_empty()
 
     def place_x(self, position):
-        if self.board_dict[position] != Mark():
+        if not self.board_dict[position].is_empty():
             raise NonEmptyPositionError
         self.board_dict[position].set_x()
 
     def place_o(self, position):
-        if self.board_dict[position] != Mark():
+        if not self.board_dict[position].is_empty():
             raise NonEmptyPositionError
         self.board_dict[position].set_o()
 
-    # def place_mark(self, position, player):
-    #     if player == self.x:
-    #         self.place_x(position)
-    #     elif player == self.o:
-    #         self.place_o(position)
+    def place_mark(self, player, position):
+        if player.is_x():
+            self.place_x(position)
+        elif player.is_o():
+            self.place_o(position)
 
     def board_full(self):
         for mark in self.board_dict.values():

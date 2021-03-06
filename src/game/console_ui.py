@@ -22,7 +22,7 @@ class UI:
 
                 if game_over:
                     if self.board.game_won():
-                        print(self.board.winner, "wins!")
+                        print("{} wins!".format(self.board.winner))
                     else:
                         print("Game is a tie.")
                     print("Restart? (y/n)", end=" ")
@@ -33,12 +33,12 @@ class UI:
                         # run = False
                         break
                 else:
-                    print(str(self.turn) + "'s turn")
+                    print("{}'s turn".format(self.turn))
                     print("Input position: ", end="")  # 9 squares from left to right, top to bottom
                     position = int(input())
                     if position < 1 or position > 9:
                         raise IndexError
-                    if (self.turn.is_x()):
+                    if self.turn.is_x():
                         self.board.place_x(position)
                         self.turn.set_o()
                     else:
