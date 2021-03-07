@@ -46,6 +46,8 @@ class Game:
         pygame.display.set_icon(Game.X_IMG)
         self.init_game()
         self.render_game()
+        self.turn_img = self.set_turn_img()
+        self.turn_text = Game.FONT.render("{}'s turn".format(self.turn), True, Game.WHITE)
         self.clock = pygame.time.Clock()
         self.run_game()
 
@@ -60,7 +62,6 @@ class Game:
         pygame.draw.rect(Game.WIN, Game.WHITE, Game.LINE_2)
         pygame.draw.rect(Game.WIN, Game.WHITE, Game.LINE_3)
         pygame.draw.rect(Game.WIN, Game.WHITE, Game.LINE_4)
-
         pygame.display.update()
 
     def run_game(self):
@@ -93,55 +94,11 @@ class Game:
                     continue
                 else:
                     for event in pygame.event.get():
-                        check_column_1 = Game.X_BOUNDARY_1 < pygame.mouse.get_pos()[0] < Game.X_BOUNDARY_2
-                        check_column_2 = Game.X_BOUNDARY_2 < pygame.mouse.get_pos()[0] < Game.X_BOUNDARY_3
-                        check_column_3 = Game.X_BOUNDARY_3 < pygame.mouse.get_pos()[0] < Game.X_BOUNDARY_4
-                        check_row_1 = Game.Y_BOUNDARY_1 < pygame.mouse.get_pos()[1] < Game.Y_BOUNDARY_2
-                        check_row_2 = Game.Y_BOUNDARY_2 < pygame.mouse.get_pos()[1] < Game.Y_BOUNDARY_3
-                        check_row_3 = Game.Y_BOUNDARY_3 < pygame.mouse.get_pos()[1] < Game.Y_BOUNDARY_4
-                        check_within_boundary = check_column_1 and check_row_1 or check_column_2 and check_row_1 or \
-                                                check_column_3 and check_row_1 or check_column_1 and check_row_2 or \
-                                                check_column_2 and check_row_2 or check_column_3 and check_row_2 or \
-                                                check_column_1 and check_row_3 or check_column_2 and check_row_3 or \
-                                                check_column_3 and check_row_3
-                        turn_img = Game.X_IMG_SCALED
-                        if self.turn.is_o():
-                            turn_img = Game.O_IMG_SCALED
                         if event.type == pygame.QUIT:
                             return
-                        elif event.type == pygame.MOUSEBUTTONDOWN and check_within_boundary:
-                            if check_column_1 and check_row_1:
-                                self.board.place_mark(self.turn, 1)
-                                Game.WIN.blit(turn_img, (Game.X_BOUNDARY_1 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_1 + Game.MARK_LENGTH_OFFSET))
-                            elif check_column_2 and check_row_1:
-                                self.board.place_mark(self.turn, 2)
-                                Game.WIN.blit(turn_img, (Game.X_BOUNDARY_2 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_1 + Game.MARK_LENGTH_OFFSET))
-                            elif check_column_3 and check_row_1:
-                                self.board.place_mark(self.turn, 3)
-                                Game.WIN.blit(turn_img, (Game.X_BOUNDARY_3 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_1 + Game.MARK_LENGTH_OFFSET))
-                            elif check_column_1 and check_row_2:
-                                self.board.place_mark(self.turn, 4)
-                                Game.WIN.blit(turn_img, (Game.X_BOUNDARY_1 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_2 + Game.MARK_LENGTH_OFFSET))
-                            elif check_column_2 and check_row_2:
-                                self.board.place_mark(self.turn, 5)
-                                Game.WIN.blit(turn_img, (Game.X_BOUNDARY_2 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_2 + Game.MARK_LENGTH_OFFSET))
-                            elif check_column_3 and check_row_2:
-                                self.board.place_mark(self.turn, 6)
-                                Game.WIN.blit(turn_img, (Game.X_BOUNDARY_3 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_2 + Game.MARK_LENGTH_OFFSET))
-                            elif check_column_1 and check_row_3:
-                                self.board.place_mark(self.turn, 7)
-                                Game.WIN.blit(turn_img, (Game.X_BOUNDARY_1 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_3 + Game.MARK_LENGTH_OFFSET))
-                            elif check_column_2 and check_row_3:
-                                self.board.place_mark(self.turn, 8)
-                                Game.WIN.blit(turn_img, (Game.X_BOUNDARY_2 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_3 + Game.MARK_LENGTH_OFFSET))
-                            elif check_column_3 and check_row_3:
-                                self.board.place_mark(self.turn, 9)
-                                Game.WIN.blit(turn_img, (Game.X_BOUNDARY_3 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_3 + Game.MARK_LENGTH_OFFSET))
-                            pygame.display.update()
-                            if self.turn.is_x():
-                                self.turn.set_o()
-                            else:
-                                self.turn.set_x()
+                        self.set_turn_img()
+                        self.display_turn()
+                        self.place_mark_event(event)
             except NonEmptyPositionError:
                 continue
 
@@ -149,6 +106,68 @@ class Game:
         self.board.reset_board()
         self.turn.set_x()
         self.render_game()
+
+    def set_turn_img(self):
+        if self.turn.is_x():
+            self.turn_img = Game.X_IMG_SCALED
+        else:
+            self.turn_img = Game.O_IMG_SCALED
+
+    def display_turn(self):
+        turn_text_loc = (Game.X_BOUNDARY_1 - self.turn_text.get_width(), Game.HEIGHT//2 - self.turn_text.get_height()//2)
+        self.turn_text.fill(Game.BLACK)
+        Game.WIN.blit(self.turn_text, turn_text_loc)
+
+        self.turn_text = Game.FONT.render("{}'s turn".format(self.turn), True, Game.WHITE)
+        turn_text_loc = (Game.X_BOUNDARY_1 - self.turn_text.get_width(), Game.HEIGHT//2 - self.turn_text.get_height()//2)
+        Game.WIN.blit(self.turn_text, turn_text_loc)
+        pygame.display.update()
+
+    def place_mark_event(self, event):
+        check_column_1 = Game.X_BOUNDARY_1 < pygame.mouse.get_pos()[0] < Game.X_BOUNDARY_2
+        check_column_2 = Game.X_BOUNDARY_2 < pygame.mouse.get_pos()[0] < Game.X_BOUNDARY_3
+        check_column_3 = Game.X_BOUNDARY_3 < pygame.mouse.get_pos()[0] < Game.X_BOUNDARY_4
+        check_row_1 = Game.Y_BOUNDARY_1 < pygame.mouse.get_pos()[1] < Game.Y_BOUNDARY_2
+        check_row_2 = Game.Y_BOUNDARY_2 < pygame.mouse.get_pos()[1] < Game.Y_BOUNDARY_3
+        check_row_3 = Game.Y_BOUNDARY_3 < pygame.mouse.get_pos()[1] < Game.Y_BOUNDARY_4
+        check_within_boundary = check_column_1 and check_row_1 or check_column_2 and check_row_1 or \
+                                check_column_3 and check_row_1 or check_column_1 and check_row_2 or \
+                                check_column_2 and check_row_2 or check_column_3 and check_row_2 or \
+                                check_column_1 and check_row_3 or check_column_2 and check_row_3 or \
+                                check_column_3 and check_row_3
+        if event.type == pygame.MOUSEBUTTONDOWN and check_within_boundary:
+            if check_column_1 and check_row_1:
+                self.board.place_mark(self.turn, 1)
+                Game.WIN.blit(self.turn_img, (Game.X_BOUNDARY_1 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_1 + Game.MARK_LENGTH_OFFSET))
+            elif check_column_2 and check_row_1:
+                self.board.place_mark(self.turn, 2)
+                Game.WIN.blit(self.turn_img, (Game.X_BOUNDARY_2 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_1 + Game.MARK_LENGTH_OFFSET))
+            elif check_column_3 and check_row_1:
+                self.board.place_mark(self.turn, 3)
+                Game.WIN.blit(self.turn_img, (Game.X_BOUNDARY_3 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_1 + Game.MARK_LENGTH_OFFSET))
+            elif check_column_1 and check_row_2:
+                self.board.place_mark(self.turn, 4)
+                Game.WIN.blit(self.turn_img, (Game.X_BOUNDARY_1 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_2 + Game.MARK_LENGTH_OFFSET))
+            elif check_column_2 and check_row_2:
+                self.board.place_mark(self.turn, 5)
+                Game.WIN.blit(self.turn_img, (Game.X_BOUNDARY_2 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_2 + Game.MARK_LENGTH_OFFSET))
+            elif check_column_3 and check_row_2:
+                self.board.place_mark(self.turn, 6)
+                Game.WIN.blit(self.turn_img, (Game.X_BOUNDARY_3 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_2 + Game.MARK_LENGTH_OFFSET))
+            elif check_column_1 and check_row_3:
+                self.board.place_mark(self.turn, 7)
+                Game.WIN.blit(self.turn_img, (Game.X_BOUNDARY_1 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_3 + Game.MARK_LENGTH_OFFSET))
+            elif check_column_2 and check_row_3:
+                self.board.place_mark(self.turn, 8)
+                Game.WIN.blit(self.turn_img, (Game.X_BOUNDARY_2 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_3 + Game.MARK_LENGTH_OFFSET))
+            elif check_column_3 and check_row_3:
+                self.board.place_mark(self.turn, 9)
+                Game.WIN.blit(self.turn_img, (Game.X_BOUNDARY_3 + Game.MARK_LENGTH_OFFSET, Game.Y_BOUNDARY_3 + Game.MARK_LENGTH_OFFSET))
+            pygame.display.update()
+            if self.turn.is_x():
+                self.turn.set_o()
+            else:
+                self.turn.set_x()
 
 
 def main():
