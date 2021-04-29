@@ -19,5 +19,5 @@
   <component name="CompilerWorkspaceConfiguration">
     <option name="MAKE_PROJECT_ON_SAVE" value="true" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.9 (Tic-tac-toe) (2)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (tic_tac_toe)" project-jdk-type="Python SDK" />
 </project>
