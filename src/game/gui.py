@@ -27,8 +27,10 @@ class Game:
     Y_BOUNDARY_2 = Y_BOUNDARY_1 + BOARD_SQUARE_LENGTH
     Y_BOUNDARY_3 = Y_BOUNDARY_2 + BOARD_SQUARE_LENGTH
     Y_BOUNDARY_4 = Y_BOUNDARY_3 + BOARD_SQUARE_LENGTH
-    X_IMG = pygame.image.load(os.path.join('..', 'images', 'red_x.png'))
-    O_IMG = pygame.image.load(os.path.join('..', 'images', 'blue_purple_circle.png'))
+    # X_IMG = pygame.image.load('../images/red_x.png')
+    # O_IMG = pygame.image.load('../images/blue_purple_circle.png')
+    X_IMG = pygame.image.load('./src/images/red_x.png')
+    O_IMG = pygame.image.load('./src/images/blue_purple_circle.png')
     X_IMG_SCALED = pygame.transform.scale(X_IMG, (MARK_LENGTH, MARK_LENGTH))
     O_IMG_SCALED = pygame.transform.scale(O_IMG, (int(MARK_LENGTH*1.2), int(MARK_LENGTH*1.2)))
     LINE_1 = pygame.Rect(X_BOUNDARY_2, Y_BOUNDARY_1, LINE_WIDTH, BOARD_LENGTH)
