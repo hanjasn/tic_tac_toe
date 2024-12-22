@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="Black">
+    <option name="sdkName" value="Python 3.13.1" />
+  </component>
   <component name="CheckStyle-IDEA">
     <option name="configuration">
       <map>
@@ -16,8 +19,5 @@
   <component name="CodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
   </component>
-  <component name="CompilerWorkspaceConfiguration">
-    <option name="MAKE_PROJECT_ON_SAVE" value="true" />
-  </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.8 (tic_tac_toe)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3.13.1" project-jdk-type="Python SDK" />
 </project>
