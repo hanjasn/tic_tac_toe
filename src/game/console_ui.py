@@ -1,3 +1,5 @@
+import sys
+sys.path.append('../')
 from model import *
 from errors import NonEmptyPositionError
 
